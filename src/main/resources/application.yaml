@@ -1,0 +1,54 @@
+server:
+  port:8080
+
+spring:
+  application:
+    name: msvc-search-riu
+
+  # 1. config  DB Oracle
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:oracle:thing:@//localhost:1521/freepdb1}
+    username: ${SPRING_DATASOURCE_USERNAME:system}
+    password: ${SPRING_DATASOURCE_PASSWORD:hotel_password}
+    drive-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.OracleDialect
+
+ #2. config de Kafka
+  kafka:
+    bootstrap-server:
+    topic:
+      name:
+    consumer:
+      group-id:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "org.faccordoba.springcloud.msvc.msvcsearchriu.domain.model"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.pringframework.kafka.support.serializer.JsonSerializer
+
+  #3. config Redis
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_HOST:6379}
+
+  #4. virtual threads enable
+  threads:
+    virtual:
+      enabled: true
+
+  #5 properties custom
+  custom:
+    cache:
+      ttl-hours:24
+
