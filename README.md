@@ -193,7 +193,7 @@ curl -X GET "http://localhost:8081/count?searchId=a1b2c3d"
 
 | Variable | Valor por Defecto | Descripción |
 | :--- | :--- | :--- |
-| `SPRING_DATASOURCE_URL` | `jdbc:oracle:thin:@//localhost:1521/freepdb1` | URL JDBC de conexión a Oracle |
+| `SPRING_DATASOURCE_URL` | `jdbc:oracle:thin:@//oracle-db-hotel:1521/freepdb1` | URL JDBC de conexión a Oracle |
 | `SPRING_DATASOURCE_USERNAME` | `system` | Usuario de base de datos |
 | `SPRING_DATASOURCE_PASSWORD` | `hotel_password` | Contraseña de base de datos |
 | `SPRING_KAFKA_BOOTSTRAP_SERVERS` | `localhost:9092` | Dirección del cluster Kafka |

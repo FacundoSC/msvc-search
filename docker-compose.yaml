@@ -73,12 +73,14 @@ services:
 
   # 5. Application hotel
   app:
-    image: faccordoba/msvc-search-riu:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: hotel-search-app
     ports:
       - "8081:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle:1521/freepdb1
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db-hotel:1521/freepdb1
       SPRING_DATASOURCE_USERNAME: hotel_user
       SPRING_DATASOURCE_PASSWORD: hotel_password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
