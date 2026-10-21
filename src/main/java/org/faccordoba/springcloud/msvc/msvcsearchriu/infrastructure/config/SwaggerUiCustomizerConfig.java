@@ -43,13 +43,17 @@ public class SwaggerUiCustomizerConfig {
             public Resource transform(HttpServletRequest request, Resource resource,
                                       ResourceTransformerChain transformerChain) throws IOException {
                 Resource transformed = super.transform(request, resource, transformerChain);
-                if (transformed != null && resource.getFilename() != null
-                        && resource.getFilename().equalsIgnoreCase("index.html")) {
-                    String html = new String(transformed.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-                    html = html.replace("</head>", CUSTOM_CSS + "</head>");
-                    return new TransformedResource(resource, html.getBytes(StandardCharsets.UTF_8));
+                try{
+                    String filename = resource.getFilename();
+                    if (filename != null && filename.equalsIgnoreCase("index.html")) {
+                        String html = new String(transformed.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+                        html = html.replace("</head>", CUSTOM_CSS + "</head>");
+                        return new TransformedResource(resource, html.getBytes(StandardCharsets.UTF_8));
+                    }
+                    return transformed;
+                }catch(NullPointerException e){
+                    return resource;
                 }
-                return transformed;
             }
         };
     }

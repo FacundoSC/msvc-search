@@ -2,10 +2,10 @@ package org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.application.exception.SearchNotFoundException;
-import org.faccordoba.springcloud.msvc.msvcsearchriu.application.mapper.SearchDomainMapper;
+import org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.web.mapper.SearchWebMapper;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.model.SearchSession;
-import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.port.in.SearchCommandUseCase;
-import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.port.in.SearchQueryUseCase;
+import org.faccordoba.springcloud.msvc.msvcsearchriu.application.port.in.SearchCommandUseCase;
+import org.faccordoba.springcloud.msvc.msvcsearchriu.application.port.in.SearchQueryUseCase;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.web.dto.request.SearchRequest;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.web.dto.response.CountSearchSessionResponse;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.web.dto.response.Payload;
@@ -43,7 +43,7 @@ class SearchControllerTest {
     private SearchQueryUseCase searchQueryUseCase;
 
     @Mock
-    private SearchDomainMapper searchDomainMapper;
+    private SearchWebMapper searchWebMapper;
 
     @InjectMocks
     private SearchController searchController;
@@ -66,13 +66,13 @@ class SearchControllerTest {
     }
 
     @Test
-    public void searchShouldReturn200AndSearchIdWhenRequestIsValidTest() throws Exception {
-        SearchRequest request = new SearchRequest("HOTEL123", "01/10/2026", "05/10/2026", List.of(30, 25));
-        SearchSession session = new SearchSession("gen-id-1", "HOTEL123", LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 5), List.of(30, 25), 0);
+     void searchShouldReturn200AndSearchIdWhenRequestIsValidTest() throws Exception {
+        SearchRequest request = new SearchRequest("HOTEL123", "01/11/2026", "05/11/2026", List.of(30, 25));
+        SearchSession session = new SearchSession("gen-id-1", "HOTEL123", LocalDate.of(2026, 11, 1), LocalDate.of(2026, 11, 5), List.of(30, 25), 0);
 
-        when(searchDomainMapper.toDomain(any(SearchRequest.class), anyString())).thenReturn(session);
+        when(searchWebMapper.toDomain(any(SearchRequest.class), anyString())).thenReturn(session);
         when(searchCommandUseCase.executeSearch(session)).thenReturn("gen-id-1");
-        when(searchDomainMapper.toSearchSessionResponse("gen-id-1")).thenReturn(new SearchSessionResponse("gen-id-1"));
+        when(searchWebMapper.toSearchSessionResponse("gen-id-1")).thenReturn(new SearchSessionResponse("gen-id-1"));
 
         mockMvc.perform(post("/search")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,7 +82,7 @@ class SearchControllerTest {
     }
 
     @Test
-    public void searchShouldReturn400WhenValidationFailsTest() throws Exception {
+     void searchShouldReturn400WhenValidationFailsTest() throws Exception {
         SearchRequest invalidRequest = new SearchRequest("", "invalid-date", "05/10/2026", List.of());
 
         mockMvc.perform(post("/search")
@@ -94,14 +94,14 @@ class SearchControllerTest {
     }
 
     @Test
-    public void findSearchShouldReturn200AndCountResponseWhenSearchExistsTest() throws Exception {
+     void findSearchShouldReturn200AndCountResponseWhenSearchExistsTest() throws Exception {
         String searchId = "abc1234";
-        SearchSession session = new SearchSession(searchId, "HOTEL123", LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 5), List.of(30, 25), 3);
-        Payload payload = new Payload("HOTEL123", "01/10/2026", "05/10/2026", List.of(30, 25));
+        SearchSession session = new SearchSession(searchId, "HOTEL123", LocalDate.of(2026, 11, 1), LocalDate.of(2026, 11, 5), List.of(30, 25), 3);
+        Payload payload = new Payload("HOTEL123", "01/11/2026", "05/11/2026", List.of(30, 25));
         CountSearchSessionResponse response = new CountSearchSessionResponse(searchId, payload, 3);
 
         when(searchQueryUseCase.count(searchId)).thenReturn(session);
-        when(searchDomainMapper.toCountSearchSessionResponse(session)).thenReturn(response);
+        when(searchWebMapper.toCountSearchSessionResponse(session)).thenReturn(response);
 
         mockMvc.perform(get("/count")
                         .param("searchId", searchId))
@@ -112,7 +112,7 @@ class SearchControllerTest {
     }
 
     @Test
-    public void findSearchShouldReturn404WhenSearchDoesNotExistTest() throws Exception {
+     void findSearchShouldReturn404WhenSearchDoesNotExistTest() throws Exception {
         String searchId = "unknown-id";
         when(searchQueryUseCase.count(searchId)).thenThrow(new SearchNotFoundException("Search session not found for id: " + searchId));
 

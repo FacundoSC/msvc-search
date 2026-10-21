@@ -1,4 +1,4 @@
-package org.faccordoba.springcloud.msvc.msvcsearchriu.application.mapper;
+package org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.web.mapper;
 
 import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.model.SearchSession;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.web.dto.request.SearchRequest;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Component
-public class SearchDomainMapperImp implements SearchDomainMapper {
+public class SearchWebMapperImpl implements SearchWebMapper {
 
     @Override
     public SearchSession toDomain(SearchRequest searchRequest, String searchId) {

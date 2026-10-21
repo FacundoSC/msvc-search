@@ -12,12 +12,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class SearchKafkaPublisher implements SearchEventPublisherPort {
     private final KafkaTemplate<String, SearchSession> kafkaTemplate;
-    @Value("${spring.kafka.topic.name}")
-    private String topic;
+
+    private final String topic;
     private final Logger logger = LoggerFactory.getLogger(SearchKafkaPublisher.class);
 
-    public SearchKafkaPublisher(KafkaTemplate<String, SearchSession> kafkaTemplate) {
+    public SearchKafkaPublisher(KafkaTemplate<String, SearchSession> kafkaTemplate,@Value("${spring.kafka.topic.name}") String topic) {
         this.kafkaTemplate = kafkaTemplate;
+        this.topic = topic;
     }
 
 

@@ -43,7 +43,7 @@ class SearchKafkaConsumerTest {
     }
 
     @Test
-    public void consumeSearchEventShouldSaveAndCacheWhenCountIsZeroTest() throws Exception {
+     void consumeSearchEventShouldSaveAndCacheWhenCountIsZeroTest() throws Exception {
         SearchSession session = new SearchSession(
                 "kafka-sess-0",
                 "HOTEL01",
@@ -61,7 +61,7 @@ class SearchKafkaConsumerTest {
     }
 
     @Test
-    public void consumeSearchEventShouldUpdateVisitCountWhenCountIsGreaterThanZeroTest() throws Exception {
+     void consumeSearchEventShouldUpdateVisitCountWhenCountIsGreaterThanZeroTest() throws Exception {
         SearchSession session = new SearchSession(
                 "kafka-sess-1",
                 "HOTEL01",
@@ -79,7 +79,7 @@ class SearchKafkaConsumerTest {
     }
 
     @Test
-    public void consumeSearchEventShouldHandleJsonParseExceptionGracefullyTest() {
+     void consumeSearchEventShouldHandleJsonParseExceptionGracefullyTest() {
         String invalidJson = "{invalid-json-payload}";
 
         consumer.consumeSearchEvent(invalidJson);
@@ -89,7 +89,7 @@ class SearchKafkaConsumerTest {
     }
 
     @Test
-    public void consumeSearchEventShouldHandleRepositoryExceptionInVirtualThreadGracefullyTest() throws Exception {
+     void consumeSearchEventShouldHandleRepositoryExceptionInVirtualThreadGracefullyTest() throws Exception {
         SearchSession session = new SearchSession(
                 "kafka-sess-err",
                 "HOTEL01",

@@ -4,6 +4,7 @@ package org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.out
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "SEARCH_SESSIONS")
@@ -50,13 +51,15 @@ public class SearchSessionEntity {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        ZoneId zoneId = ZoneId.systemDefault();
+        this.createdAt = LocalDateTime.now(zoneId);
+        this.updatedAt = LocalDateTime.now(zoneId);
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        ZoneId zoneId = ZoneId.systemDefault();
+        this.updatedAt = LocalDateTime.now(zoneId);
     }
 
     public String getSearchId() {

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class SearchSessionMapperTest {
 
@@ -26,7 +27,7 @@ class SearchSessionMapperTest {
     }
 
     @Test
-    public void toEntityShouldConvertDomainModelToEntityTest() {
+        void toEntityShouldConvertDomainModelToEntityTest() {
         SearchSession domain = new SearchSession(
                 "map-sess-1",
                 "HOTEL01",
@@ -37,18 +38,19 @@ class SearchSessionMapperTest {
         );
 
         SearchSessionEntity entity = mapper.toEntity(domain);
-
-        assertThat(entity).isNotNull();
-        assertThat(entity.getSearchId()).isEqualTo("map-sess-1");
-        assertThat(entity.getHotelId()).isEqualTo("HOTEL01");
-        assertThat(entity.getCheckIn()).isEqualTo(LocalDate.of(2026, 9, 10));
-        assertThat(entity.getCheckOut()).isEqualTo(LocalDate.of(2026, 9, 15));
-        assertThat(entity.getAgesSequence()).isEqualTo("25,30,4");
-        assertThat(entity.getVisitCount()).isEqualTo(2);
+        assertAll(
+                () -> assertThat(entity).isNotNull(),
+                () -> assertThat(entity.getSearchId()).isEqualTo("map-sess-1"),
+                () -> assertThat(entity.getHotelId()).isEqualTo("HOTEL01"),
+                () -> assertThat(entity.getCheckIn()).isEqualTo(LocalDate.of(2026, 9, 10)),
+                () -> assertThat(entity.getCheckOut()).isEqualTo(LocalDate.of(2026, 9, 15)),
+                () -> assertThat(entity.getAgesSequence()).isEqualTo("25,30,4"),
+                () -> assertThat(entity.getVisitCount()).isEqualTo(2)
+        );
     }
 
     @Test
-    public void toDomainShouldConvertEntityToDomainModelTest() {
+        void toDomainShouldConvertEntityToDomainModelTest() {
         SearchSessionEntity entity = new SearchSessionEntity(
                 "map-sess-2",
                 "HOTEL02",
@@ -60,12 +62,14 @@ class SearchSessionMapperTest {
 
         SearchSession domain = mapper.toDomain(entity);
 
-        assertThat(domain).isNotNull();
-        assertThat(domain.sessionId()).isEqualTo("map-sess-2");
-        assertThat(domain.hotelId()).isEqualTo("HOTEL02");
-        assertThat(domain.checkIn()).isEqualTo(LocalDate.of(2026, 9, 20));
-        assertThat(domain.checkOut()).isEqualTo(LocalDate.of(2026, 9, 25));
-        assertThat(domain.ages()).containsExactly(35, 40);
-        assertThat(domain.count()).isEqualTo(5);
+        assertAll(
+                () -> assertThat(domain).isNotNull(),
+                () -> assertThat(domain.sessionId()).isEqualTo("map-sess-2"),
+                () -> assertThat(domain.hotelId()).isEqualTo("HOTEL02"),
+                () -> assertThat(domain.checkIn()).isEqualTo(LocalDate.of(2026, 9, 20)),
+                () -> assertThat(domain.checkOut()).isEqualTo(LocalDate.of(2026, 9, 25)),
+                () -> assertThat(domain.ages()).containsExactly(35, 40),
+                () -> assertThat(domain.count()).isEqualTo(5)
+        );
     }
 }

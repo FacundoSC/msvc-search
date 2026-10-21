@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class SearchSessionTest {
     private String searchId;
@@ -22,8 +23,8 @@ class SearchSessionTest {
     void setUp() {
         searchId = UUID.randomUUID().toString().substring(0, 7);
         hotelId = "12ert";
-        checkIn = LocalDate.of(2024, 6, 1);
-        checkOut = LocalDate.of(2024, 6, 5);
+        checkIn = LocalDate.now().plusDays(1);
+        checkOut = LocalDate.now().plusDays(2);
         ages = List.of(25, 30);
     }
 
@@ -37,7 +38,7 @@ class SearchSessionTest {
     }
 
     @Test
-    public void newSearchSessionShouldBeCreated() {
+    void newSearchSessionShouldBeCreated() {
         SearchSession session = new SearchSession(searchId,
                 hotelId,
                 checkIn,
@@ -45,24 +46,20 @@ class SearchSessionTest {
                 ages,
                 null
         );
-        assertThat(session.sessionId())
-                .isEqualTo(searchId);
-        assertThat(session.hotelId())
-                .isEqualTo(hotelId);
-        assertThat(session.checkIn())
-                .isEqualTo(checkIn);
-        assertThat(session.checkOut())
-                .isEqualTo(checkOut);
-        assertThat(session.ages())
-                .isEqualTo(List.of(25, 30));
-        assertThat(session.count())
-                .isEqualTo(0);
+        assertAll(
+                () -> assertThat(session.sessionId()).isEqualTo(searchId),
+                () -> assertThat(session.hotelId()).isEqualTo(hotelId),
+                () -> assertThat(session.checkIn()).isEqualTo(checkIn),
+                () -> assertThat(session.checkOut()).isEqualTo(checkOut),
+                () -> assertThat(session.ages()).isEqualTo(List.of(25, 30)),
+                () -> assertThat(session.count()).isZero()
+        );
     }
 
 
 
     @Test
-    public void newSearchSessionShouldBeCreatedWhenCountIsNotNull() {
+    void newSearchSessionShouldBeCreatedWhenCountIsNotNull() {
         SearchSession session = new SearchSession(searchId,
                 hotelId,
                 checkIn,
@@ -70,25 +67,21 @@ class SearchSessionTest {
                 ages,
                 1
         );
-        assertThat(session.sessionId())
-                .isEqualTo(searchId);
-        assertThat(session.hotelId())
-                .isEqualTo(hotelId);
-        assertThat(session.checkIn())
-                .isEqualTo(checkIn);
-        assertThat(session.checkOut())
-                .isEqualTo(checkOut);
-        assertThat(session.ages())
-                .isEqualTo(List.of(25, 30));
-        assertThat(session.count())
-                .isEqualTo(1);
+        assertAll(
+                () -> assertThat(session.sessionId()).isEqualTo(searchId),
+                () -> assertThat(session.hotelId()).isEqualTo(hotelId),
+                () -> assertThat(session.checkIn()).isEqualTo(checkIn),
+                () -> assertThat(session.checkOut()).isEqualTo(checkOut),
+                () -> assertThat(session.ages()).isEqualTo(List.of(25, 30)),
+                () -> assertThat(session.count()).isEqualTo(1)
+        );
     }
 
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenSessionIdIsNull() {
+    void newSearchSessionShouldThrowExceptionWhenSessionIdIsNull() {
         assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession(null,
+ new SearchSession(null,
                     hotelId,
                     checkIn,
                     checkOut,
@@ -100,9 +93,9 @@ class SearchSessionTest {
     }
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenSessionIdIsEmpty() {
+    void newSearchSessionShouldThrowExceptionWhenSessionIdIsEmpty() {
         assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession("",
+ new SearchSession("",
                     hotelId,
                     checkIn,
                     checkOut,
@@ -115,9 +108,9 @@ class SearchSessionTest {
 
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenHotelIdIsNull() {
+    void newSearchSessionShouldThrowExceptionWhenHotelIdIsNull() {
         assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession(searchId,
+         new SearchSession(searchId,
                     null,
                     checkIn,
                     checkOut,
@@ -129,9 +122,9 @@ class SearchSessionTest {
     }
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenHotelIdIsEmpty() {
+    void newSearchSessionShouldThrowExceptionWhenHotelIdIsEmpty() {
         assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession(searchId,
+            new SearchSession(searchId,
                     "",
                     checkIn,
                     checkOut,
@@ -144,9 +137,9 @@ class SearchSessionTest {
 
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenCheckInIsNull() {
+    void newSearchSessionShouldThrowExceptionWhenCheckInIsNull() {
         assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession(searchId,
+        new SearchSession(searchId,
                     hotelId,
                     null,
                     checkOut,
@@ -158,9 +151,9 @@ class SearchSessionTest {
     }
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenCheckOutIsNull() {
+    void newSearchSessionShouldThrowExceptionWhenCheckOutIsNull() {
         assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession(searchId,
+           new SearchSession(searchId,
                     hotelId,
                     checkIn,
                     null,
@@ -172,9 +165,9 @@ class SearchSessionTest {
     }
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenCheckInIsEqualsToCheckOut() {
+    void newSearchSessionShouldThrowExceptionWhenCheckInIsEqualsToCheckOut() {
         assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession(searchId,
+            new SearchSession(searchId,
                     hotelId,
                     checkIn,
                     checkIn,
@@ -186,9 +179,9 @@ class SearchSessionTest {
     }
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenCheckInIsAfterCheckOut() {
+    void newSearchSessionShouldThrowExceptionWhenCheckInIsAfterCheckOut() {
         assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession(searchId,
+             new SearchSession(searchId,
                     hotelId,
                     checkOut,
                     checkIn,
@@ -201,9 +194,9 @@ class SearchSessionTest {
 
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenAgesIsNull() {
+    void newSearchSessionShouldThrowExceptionWhenAgesIsNull() {
         assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession(searchId,
+            new SearchSession(searchId,
                     hotelId,
                     checkIn,
                     checkOut,
@@ -216,9 +209,8 @@ class SearchSessionTest {
 
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenAgesIsEmpty() {
-        assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession(searchId,
+    void newSearchSessionShouldThrowExceptionWhenAgesIsEmpty() {
+        assertThatThrownBy(() -> {new SearchSession(searchId,
                     hotelId,
                     checkIn,
                     checkOut,
@@ -231,9 +223,9 @@ class SearchSessionTest {
 
 
     @Test
-    public void newSearchSessionShouldThrowExceptionWhenAgesContainsValuesNotPositive() {
+     void newSearchSessionShouldThrowExceptionWhenAgesContainsValuesNotPositive() {
         assertThatThrownBy(() -> {
-            SearchSession session = new SearchSession(searchId,
+            new SearchSession(searchId,
                     hotelId,
                     checkIn,
                     checkOut,

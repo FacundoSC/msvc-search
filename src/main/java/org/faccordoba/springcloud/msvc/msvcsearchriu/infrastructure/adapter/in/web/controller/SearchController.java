@@ -8,13 +8,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.faccordoba.springcloud.msvc.msvcsearchriu.application.mapper.SearchDomainMapper;
+import org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.web.mapper.SearchWebMapper;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.model.SearchSession;
-import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.port.in.SearchCommandUseCase;
-import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.port.in.SearchQueryUseCase;
+import org.faccordoba.springcloud.msvc.msvcsearchriu.application.port.in.SearchCommandUseCase;
+import org.faccordoba.springcloud.msvc.msvcsearchriu.application.port.in.SearchQueryUseCase;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.web.dto.request.SearchRequest;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.web.dto.response.CountSearchSessionResponse;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.adapter.in.web.dto.response.SearchSessionResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,14 +27,14 @@ public class SearchController {
 
     private final SearchCommandUseCase searchCommandUseCase;
     private final SearchQueryUseCase searchQueryUseCase;
-    private final SearchDomainMapper searchDomainMapper;
+    private final SearchWebMapper searchWebMapper;
 
     public SearchController(SearchCommandUseCase searchCommandUseCase,
                             SearchQueryUseCase searchQueryUseCase,
-                            SearchDomainMapper searchDomainMapper) {
+                            SearchWebMapper searchWebMapper) {
         this.searchCommandUseCase = searchCommandUseCase;
         this.searchQueryUseCase = searchQueryUseCase;
-        this.searchDomainMapper = searchDomainMapper;
+        this.searchWebMapper = searchWebMapper;
     }
 
     @Operation(
@@ -42,7 +43,7 @@ public class SearchController {
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     description = "Búsqueda registrada exitosamente",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SearchSessionResponse.class))
             ),
@@ -57,8 +58,9 @@ public class SearchController {
         // 1. generate a unique search ID
         String searchId = UUID.randomUUID().toString().substring(0, 7);
         // 2. validate and Map the search request to the domain model
-        SearchSession searchSession = searchDomainMapper.toDomain(searchRequest, searchId);
-        return ResponseEntity.ok(searchDomainMapper.toSearchSessionResponse(searchCommandUseCase.executeSearch(searchSession)));
+        SearchSession searchSession = searchWebMapper.toDomain(searchRequest, searchId);
+        return ResponseEntity.status(HttpStatus.CREATED.value())
+                .body(searchWebMapper.toSearchSessionResponse(searchCommandUseCase.executeSearch(searchSession)));
     }
 
     @Operation(
@@ -82,7 +84,7 @@ public class SearchController {
             @Parameter(description = "ID de la sesión de búsqueda a consultar", example = "0114752", required = true)
             @RequestParam(name = "searchId") String searchId) {
         SearchSession searchSession = searchQueryUseCase.count(searchId);
-        return ResponseEntity.ok(searchDomainMapper.toCountSearchSessionResponse(searchSession));
+        return ResponseEntity.ok(searchWebMapper.toCountSearchSessionResponse(searchSession));
     }
 
 }

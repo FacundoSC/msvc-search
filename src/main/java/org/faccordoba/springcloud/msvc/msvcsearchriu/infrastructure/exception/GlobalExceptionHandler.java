@@ -1,7 +1,6 @@
 package org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.exception;
 
 import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.exception.SearchDomainException;
-import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.exception.SearchNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         ValidationErrorResponse error = new ValidationErrorResponse(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneId.systemDefault()),
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation Failed",
                 "Los datos enviados no son válidos",
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
             WebRequest request) {
 
         ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneId.systemDefault()),
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad Request",
                 ex.getMessage(),
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
     })    public ResponseEntity<ErrorResponse> handleSearchNotFound(RuntimeException ex) {
         LOGGER.warn("Search Not Found: {}", ex.getMessage());
         ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneId.systemDefault()),
                 HttpStatus.NOT_FOUND.value(),
                 "Not Found",
                 ex.getMessage(),
@@ -95,7 +95,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDomainError(SearchDomainException ex) {
         LOGGER.error("Error to infra traslate to domain: {}", ex.getMessage(), ex);
         ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneId.systemDefault()),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Internal Server Error",
                 ex.getMessage(),null);
@@ -110,7 +110,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGlobalError(Exception ex) {
         LOGGER.error("unexpected error: ", ex);
         ErrorResponse error = new ErrorResponse(
-                LocalDateTime.now(),
+                LocalDateTime.now(ZoneId.systemDefault()),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "unexpected error",
                 ex.getMessage(),null);

@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,29 +51,36 @@ class SwaggerUiCustomizerConfigTest {
     }
 
     @Test
-    public void swaggerUiCustomizerConfigShouldProvideSwaggerIndexPageTransformerTest() {
-        assertThat(transformer).isNotNull();
-        assertThat(transformer).isInstanceOf(SwaggerIndexPageTransformer.class);
+    void swaggerUiCustomizerConfigShouldProvideSwaggerIndexPageTransformerTest() {
+        assertAll(
+                () -> assertThat(transformer).isNotNull(),
+                () -> assertThat(transformer).isInstanceOf(SwaggerIndexPageTransformer.class)
+        );
     }
 
     @Test
-    public void transformShouldInjectCustomCssIntoIndexHtmlTest() throws IOException {
+     void transformShouldInjectCustomCssIntoIndexHtmlTest() throws IOException {
         Resource indexHtml = writeFile("index.html",
                 "<html><head><title>Swagger UI</title></head><body></body></html>");
 
         Resource result = transformer.transform(request, indexHtml, transformerChain);
 
-        assertThat(result).isNotNull();
-        assertThat(result).isInstanceOf(TransformedResource.class);
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result).isInstanceOf(TransformedResource.class)
+        );
+
         String content = new String(result.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        assertThat(content).contains("</head>");
-        assertThat(content).contains("<style>");
-        assertThat(content).contains(".swagger-ui .topbar .topbar-wrapper .link { display: none !important; }");
-        assertThat(content).contains(".swagger-ui .footer { display: none !important; }");
+        assertAll(
+                () -> assertThat(content).contains("</head>"),
+                () -> assertThat(content).contains("<style>"),
+                () -> assertThat(content).contains(".swagger-ui .topbar .topbar-wrapper .link { display: none !important; }"),
+                () -> assertThat(content).contains(".swagger-ui .footer { display: none !important; }")
+        );
     }
 
     @Test
-    public void transformShouldPassThroughResourceThatIsNotIndexHtmlTest() throws IOException {
+     void transformShouldPassThroughResourceThatIsNotIndexHtmlTest() throws IOException {
         Resource resource = writeFile("swagger-ui.css", ".topbar { display: block; }");
 
         Resource result = transformer.transform(request, resource, transformerChain);
@@ -81,7 +89,7 @@ class SwaggerUiCustomizerConfigTest {
     }
 
     @Test
-    public void transformShouldPassThroughResourceWithoutFilenameTest() throws IOException {
+     void transformShouldPassThroughResourceWithoutFilenameTest() throws IOException {
         Resource resource = mock(Resource.class);
         when(resource.getURL()).thenReturn(tempDir.resolve("bogus.css").toUri().toURL());
 

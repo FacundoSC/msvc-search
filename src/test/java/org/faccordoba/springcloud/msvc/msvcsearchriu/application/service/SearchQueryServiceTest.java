@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,16 +56,17 @@ class SearchQueryServiceTest {
     }
 
     @Test
-    public void countShouldReturnUpdatedSessionWhenSessionExistsInCacheTest() {
+    void countShouldReturnUpdatedSessionWhenSessionExistsInCacheTest() {
         when(searchCache.getSearchSession(searchId)).thenReturn(Optional.of(baseSession));
         when(searchCache.incrementCount(searchId)).thenReturn(3);
 
         SearchSession result = searchQueryService.count(searchId);
-
-        assertThat(result).isNotNull();
-        assertThat(result.sessionId()).isEqualTo(searchId);
-        assertThat(result.hotelId()).isEqualTo("HOTEL02");
-        assertThat(result.count()).isEqualTo(3);
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.sessionId()).isEqualTo(searchId),
+                () -> assertThat(result.hotelId()).isEqualTo("HOTEL02"),
+                () -> assertThat(result.count()).isEqualTo(3)
+        );
 
         verify(searchCache).incrementCount(searchId);
         verify(searchCache).markAsDirty(searchId);
@@ -72,17 +74,17 @@ class SearchQueryServiceTest {
     }
 
     @Test
-    public void countShouldFetchFromDbAndPopulateCacheWhenCacheMissTest() {
+    void countShouldFetchFromDbAndPopulateCacheWhenCacheMissTest() {
         when(searchCache.getSearchSession(searchId)).thenReturn(Optional.empty());
         when(searchRepository.findBySearchId(searchId)).thenReturn(Optional.of(baseSession));
         when(searchCache.incrementCount(searchId)).thenReturn(3);
 
         SearchSession result = searchQueryService.count(searchId);
-
-        assertThat(result).isNotNull();
-        assertThat(result.sessionId()).isEqualTo(searchId);
-        assertThat(result.count()).isEqualTo(3);
-
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.sessionId()).isEqualTo(searchId),
+                () -> assertThat(result.count()).isEqualTo(3)
+        );
         verify(searchRepository).findBySearchId(searchId);
         verify(searchCache).putSearchSession(baseSession);
         verify(searchCache).incrementCount(searchId);
@@ -90,7 +92,7 @@ class SearchQueryServiceTest {
     }
 
     @Test
-    public void countShouldThrowSearchNotFoundExceptionWhenNotFoundInCacheAndDbTest() {
+     void countShouldThrowSearchNotFoundExceptionWhenNotFoundInCacheAndDbTest() {
         when(searchCache.getSearchSession(searchId)).thenReturn(Optional.empty());
         when(searchRepository.findBySearchId(searchId)).thenReturn(Optional.empty());
 

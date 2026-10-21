@@ -1,4 +1,4 @@
-package org.faccordoba.springcloud.msvc.msvcsearchriu.domain.port.in;
+package org.faccordoba.springcloud.msvc.msvcsearchriu.application.port.in;
 
 import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.model.SearchSession;
 
