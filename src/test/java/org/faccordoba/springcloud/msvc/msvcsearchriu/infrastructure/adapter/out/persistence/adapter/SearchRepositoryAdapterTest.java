@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -65,7 +66,7 @@ class SearchRepositoryAdapterTest {
     }
 
     @Test
-    public void saveShouldPersistEntitySuccessfullyTest() {
+     void saveShouldPersistEntitySuccessfullyTest() {
         when(searchMapper.toEntity(domainSession)).thenReturn(entitySession);
         when(searchSessionJpaRepository.save(entitySession)).thenReturn(entitySession);
 
@@ -76,7 +77,7 @@ class SearchRepositoryAdapterTest {
     }
 
     @Test
-    public void saveShouldThrowSearchDomainExceptionWhenDataIntegrityViolationOccursTest() {
+    void saveShouldThrowSearchDomainExceptionWhenDataIntegrityViolationOccursTest() {
         when(searchMapper.toEntity(domainSession)).thenReturn(entitySession);
         when(searchSessionJpaRepository.save(entitySession))
                 .thenThrow(new DataIntegrityViolationException("Constraint violation"));
@@ -89,21 +90,23 @@ class SearchRepositoryAdapterTest {
     }
 
     @Test
-    public void findBySearchIdShouldReturnDomainModelWhenEntityExistsTest() {
+    void findBySearchIdShouldReturnDomainModelWhenEntityExistsTest() {
         String searchId = "repo-sess-1";
         when(searchSessionJpaRepository.findBySearchId(searchId)).thenReturn(Optional.of(entitySession));
         when(searchMapper.toDomain(entitySession)).thenReturn(domainSession);
 
         Optional<SearchSession> result = searchRepositoryAdapter.findBySearchId(searchId);
 
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(domainSession);
+        assertAll(
+                ()-> assertThat(result).contains(domainSession),
+                () -> assertThat(result).isPresent()
+        );
         verify(searchSessionJpaRepository).findBySearchId(searchId);
         verify(searchMapper).toDomain(entitySession);
     }
 
     @Test
-    public void findBySearchIdShouldThrowSearchNotFoundExceptionWhenEntityNotFoundTest() {
+    void findBySearchIdShouldThrowSearchNotFoundExceptionWhenEntityNotFoundTest() {
         String searchId = "not-found-id";
         when(searchSessionJpaRepository.findBySearchId(searchId)).thenReturn(Optional.empty());
 
@@ -116,7 +119,7 @@ class SearchRepositoryAdapterTest {
     }
 
     @Test
-    public void updateVisitCountShouldUpdateVisitCountSuccessfullyTest() {
+    void updateVisitCountShouldUpdateVisitCountSuccessfullyTest() {
         String searchId = "repo-sess-1";
         int count = 10;
 
@@ -126,7 +129,7 @@ class SearchRepositoryAdapterTest {
     }
 
     @Test
-    public void updateVisitCountShouldThrowSearchDomainExceptionWhenDatabaseErrorOccursTest() {
+    void updateVisitCountShouldThrowSearchDomainExceptionWhenDatabaseErrorOccursTest() {
         String searchId = "repo-sess-1";
         int count = 10;
         doThrow(new RuntimeException("DB down"))

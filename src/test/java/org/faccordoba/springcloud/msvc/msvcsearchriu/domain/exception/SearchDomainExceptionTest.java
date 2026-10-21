@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class SearchDomainExceptionTest {
     @Test
-    public void searchDomainExceptionShouldCreateInstanceWithMessageTest(){
+     void searchDomainExceptionShouldCreateInstanceWithMessageTest(){
         String errorMessage = "Domain bussiness rule violation";
         SearchDomainException exception = new SearchDomainException(errorMessage);
         assertThat(exception)

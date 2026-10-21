@@ -23,6 +23,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,7 +65,7 @@ class RedisSearchCacheTest {
     }
 
     @Test
-    public void incrementCountShouldIncrementAndReturnValueTest() {
+     void incrementCountShouldIncrementAndReturnValueTest() {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.increment("search:count:redis-sess-1")).thenReturn(5L);
 
@@ -75,7 +76,7 @@ class RedisSearchCacheTest {
     }
 
     @Test
-    public void incrementCountShouldThrowSearchDomainExceptionWhenRedisSystemExceptionOccursTest() {
+     void incrementCountShouldThrowSearchDomainExceptionWhenRedisSystemExceptionOccursTest() {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.increment("search:count:redis-sess-1"))
                 .thenThrow(new RedisSystemException("Redis down", new RuntimeException()));
@@ -86,7 +87,7 @@ class RedisSearchCacheTest {
     }
 
     @Test
-    public void getSearchSessionShouldReturnEmptyWhenKeyNotFoundInRedisTest() {
+     void getSearchSessionShouldReturnEmptyWhenKeyNotFoundInRedisTest() {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get("search:session:redis-sess-1")).thenReturn(null);
 
@@ -97,7 +98,7 @@ class RedisSearchCacheTest {
     }
 
     @Test
-    public void getSearchSessionShouldReturnSessionWithUpdatedCountWhenFoundInRedisTest() throws Exception {
+     void getSearchSessionShouldReturnSessionWithUpdatedCountWhenFoundInRedisTest() throws Exception {
         String json = "{\"sessionId\":\"redis-sess-1\"}";
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get("search:session:redis-sess-1")).thenReturn(json);
@@ -106,13 +107,15 @@ class RedisSearchCacheTest {
 
         Optional<SearchSession> result = redisSearchCache.getSearchSession("redis-sess-1");
 
-        assertThat(result).isPresent();
-        assertThat(result.get().sessionId()).isEqualTo("redis-sess-1");
-        assertThat(result.get().count()).isEqualTo(7);
+        assertAll(
+                () -> assertThat(result).isPresent(),
+                () -> assertThat(result.get().sessionId()).isEqualTo("redis-sess-1"),
+                () -> assertThat(result.get().count()).isEqualTo(7)
+        );
     }
 
     @Test
-    public void getSearchSessionShouldReturnSessionWithInternalCountWhenCountKeyMissingTest() throws Exception {
+     void getSearchSessionShouldReturnSessionWithInternalCountWhenCountKeyMissingTest() throws Exception {
         String json = "{\"sessionId\":\"redis-sess-1\"}";
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get("search:session:redis-sess-1")).thenReturn(json);
@@ -121,13 +124,15 @@ class RedisSearchCacheTest {
 
         Optional<SearchSession> result = redisSearchCache.getSearchSession("redis-sess-1");
 
-        assertThat(result).isPresent();
-        assertThat(result.get().sessionId()).isEqualTo("redis-sess-1");
-        assertThat(result.get().count()).isEqualTo(2);
+        assertAll(
+                () -> assertThat(result).isPresent(),
+                () -> assertThat(result.get().sessionId()).isEqualTo("redis-sess-1"),
+                () -> assertThat(result.get().count()).isEqualTo(2)
+        );
     }
 
     @Test
-    public void getSearchSessionShouldReturnEmptyWhenJsonParsingFailsTest() throws Exception {
+    void getSearchSessionShouldReturnEmptyWhenJsonParsingFailsTest() throws Exception {
         String json = "invalid-json";
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get("search:session:redis-sess-1")).thenReturn(json);
@@ -139,7 +144,7 @@ class RedisSearchCacheTest {
     }
 
     @Test
-    public void putSearchSessionShouldStoreSessionAndCountInRedisTest() throws Exception {
+     void putSearchSessionShouldStoreSessionAndCountInRedisTest() throws Exception {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(objectMapper.writeValueAsString(session)).thenReturn("{\"sessionId\":\"redis-sess-1\"}");
 
@@ -150,7 +155,7 @@ class RedisSearchCacheTest {
     }
 
     @Test
-    public void putSearchSessionShouldThrowSearchDomainExceptionWhenSerializationFailsTest() throws Exception {
+     void putSearchSessionShouldThrowSearchDomainExceptionWhenSerializationFailsTest() throws Exception {
         when(objectMapper.writeValueAsString(session)).thenThrow(new JsonProcessingException("Serialization error") {});
 
         assertThatThrownBy(() -> redisSearchCache.putSearchSession(session))
@@ -159,7 +164,7 @@ class RedisSearchCacheTest {
     }
 
     @Test
-    public void markAsDirtyShouldAddKeyToDirtySetTest() {
+     void markAsDirtyShouldAddKeyToDirtySetTest() {
         when(redisTemplate.opsForSet()).thenReturn(setOperations);
 
         redisSearchCache.markAsDirty("redis-sess-1");
@@ -168,7 +173,7 @@ class RedisSearchCacheTest {
     }
 
     @Test
-    public void getDirtyIdsShouldReturnListOfDirtyKeysTest() {
+     void getDirtyIdsShouldReturnListOfDirtyKeysTest() {
         when(redisTemplate.opsForSet()).thenReturn(setOperations);
         when(setOperations.members("search:dirty:ids")).thenReturn(Set.of("sess-1", "sess-2"));
 
@@ -178,7 +183,7 @@ class RedisSearchCacheTest {
     }
 
     @Test
-    public void getDirtyIdsShouldReturnEmptyListWhenDirtySetIsNullTest() {
+     void getDirtyIdsShouldReturnEmptyListWhenDirtySetIsNullTest() {
         when(redisTemplate.opsForSet()).thenReturn(setOperations);
         when(setOperations.members("search:dirty:ids")).thenReturn(null);
 
@@ -188,7 +193,7 @@ class RedisSearchCacheTest {
     }
 
     @Test
-    public void clearDirtyShouldRemoveKeyFromDirtySetTest() {
+     void clearDirtyShouldRemoveKeyFromDirtySetTest() {
         when(redisTemplate.opsForSet()).thenReturn(setOperations);
 
         redisSearchCache.clearDirty("redis-sess-1");

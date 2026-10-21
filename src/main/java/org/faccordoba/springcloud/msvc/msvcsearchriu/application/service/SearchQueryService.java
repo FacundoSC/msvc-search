@@ -2,14 +2,12 @@ package org.faccordoba.springcloud.msvc.msvcsearchriu.application.service;
 
 import org.faccordoba.springcloud.msvc.msvcsearchriu.application.exception.SearchNotFoundException;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.model.SearchSession;
-import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.port.in.SearchQueryUseCase;
+import org.faccordoba.springcloud.msvc.msvcsearchriu.application.port.in.SearchQueryUseCase;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.port.out.SearchCachePort;
 import org.faccordoba.springcloud.msvc.msvcsearchriu.domain.port.out.SearchRepositoryPort;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
 public class SearchQueryService implements SearchQueryUseCase {
 
     private final SearchRepositoryPort searchRepository;

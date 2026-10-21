@@ -1,18 +1,17 @@
 services:
-  #1. oracle DB
-  oracle:
-    image: gvenzl/oracle-free:23-slim-faststart
-    container_name: oracle-db-hotel
+  #1. postgres DB
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-db-hotel
     environment:
-      ORACLE_PASSWORD: hotel_password
-      APP_USER: hotel_user
-      APP_USER_PASSWORD: hotel_password
+      POSTGRES_USER: hotel_user
+      POSTGRES_PASSWORD: hotel_password
     ports:
-      - "1521:1521"
+      - "5432:5432"
     volumes:
-      - oracle_data:/opt/oracle/oradata
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "healthcheck.sh"]
+      test: ["CMD", "pg_isready"]
       interval: 10s
       timeout: 5s
       retries: 20
@@ -78,19 +77,20 @@ services:
       dockerfile: Dockerfile
     container_name: hotel-search-app
     ports:
-      - "8081:8080"
+      - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db-hotel:1521/freepdb1
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_DATASOURCE_USERNAME: hotel_user
       SPRING_DATASOURCE_PASSWORD: hotel_password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
       SPRING_KAFKA_BOOTSTRAP_SERVERS: broker:29092
-      SPRING_KAFKA_TOPIC_NAME: hotel-search-events
+      SPRING_KAFKA_TOPIC_NAME: hotel_availability_searches
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
       SPRING_THREADS_VIRTUAL_ENABLED: "true"
     depends_on:
-        oracle:
+        postgres:
          condition: service_healthy
         broker:
           condition: service_started
@@ -104,7 +104,7 @@ networks:
     driver: bridge
 
 volumes:
-  oracle_data:
+  postgres_data:
   kafka_data:
   redis_data:
 

@@ -7,11 +7,12 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class SearchKafkaProducerConfigTest {
 
     @Test
-    public void searchKafkaProducerConfigShouldCreateProducerFactoryAndTemplateTest() {
+     void searchKafkaProducerConfigShouldCreateProducerFactoryAndTemplateTest() {
         SearchKafkaProducerConfig config = new SearchKafkaProducerConfig();
         ReflectionTestUtils.setField(config, "bootstrapServers", "localhost:9092");
         ReflectionTestUtils.setField(config, "keySerializer", "org.apache.kafka.common.serialization.StringSerializer");
@@ -20,8 +21,10 @@ class SearchKafkaProducerConfigTest {
         ProducerFactory<String, SearchSession> producerFactory = config.searchProducerFactory();
         KafkaTemplate<String, SearchSession> template = config.kafkaTemplate();
 
-        assertThat(producerFactory).isNotNull();
-        assertThat(template).isNotNull();
+        assertAll(
+                () -> assertThat(producerFactory).isNotNull(),
+                () -> assertThat(template).isNotNull()
+        );
     }
 
 }

@@ -32,8 +32,8 @@ class SearchSessionServiceTest {
         searchSession = new SearchSession(
                 "session-123",
                 "HOTEL01",
-                LocalDate.of(2026, 10, 1),
-                LocalDate.of(2026, 10, 5),
+                LocalDate.of(2026, 11, 1),
+                LocalDate.of(2026, 11, 5),
                 List.of(30, 28),
                 0
         );
@@ -45,7 +45,7 @@ class SearchSessionServiceTest {
     }
 
     @Test
-    public void executeSearchShouldPublishEventAndReturnSessionIdTest() {
+       void executeSearchShouldPublishEventAndReturnSessionIdTest() {
         String sessionId = searchSessionService.executeSearch(searchSession);
 
         assertThat(sessionId).isEqualTo("session-123");

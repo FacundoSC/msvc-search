@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class SearchSyncSchedulerTest {
+class SearchSyncServiceTest {
 
     @Mock
     private SearchCachePort searchCache;
@@ -27,7 +27,7 @@ class SearchSyncSchedulerTest {
     private SearchRepositoryPort searchRepository;
 
     @InjectMocks
-    private SearchSyncScheduler searchSyncScheduler;
+    private SearchSyncService searchSyncService;
 
     private SearchSession session;
 
@@ -49,10 +49,10 @@ class SearchSyncSchedulerTest {
     }
 
     @Test
-    public void syncCountsToDatabaseShouldDoNothingWhenNoDirtyIdsTest() {
+    void syncCountsToDatabaseShouldDoNothingWhenNoDirtyIdsTest() {
         when(searchCache.getDirtyIds()).thenReturn(List.of());
 
-        searchSyncScheduler.syncCountsToDatabase();
+        searchSyncService.syncDirtyCounts();
 
         verify(searchCache).getDirtyIds();
         verifyNoMoreInteractions(searchCache);
@@ -60,22 +60,22 @@ class SearchSyncSchedulerTest {
     }
 
     @Test
-    public void syncCountsToDatabaseShouldUpdateDatabaseAndClearDirtyWhenDirtyIdsPresentTest() {
+    void syncCountsToDatabaseShouldUpdateDatabaseAndClearDirtyWhenDirtyIdsPresentTest() {
         when(searchCache.getDirtyIds()).thenReturn(List.of("sync-1"));
         when(searchCache.getSearchSession("sync-1")).thenReturn(Optional.of(session));
 
-        searchSyncScheduler.syncCountsToDatabase();
+        searchSyncService.syncDirtyCounts();
 
         verify(searchRepository).updateVisitCount("sync-1", 5);
         verify(searchCache).clearDirty("sync-1");
     }
 
     @Test
-    public void syncCountsToDatabaseShouldSkipWhenSessionNotPresentInCacheTest() {
+    void syncCountsToDatabaseShouldSkipWhenSessionNotPresentInCacheTest() {
         when(searchCache.getDirtyIds()).thenReturn(List.of("sync-missing"));
         when(searchCache.getSearchSession("sync-missing")).thenReturn(Optional.empty());
 
-        searchSyncScheduler.syncCountsToDatabase();
+        searchSyncService.syncDirtyCounts();
 
         verify(searchCache).getSearchSession("sync-missing");
         verify(searchRepository, never()).updateVisitCount(anyString(), anyInt());
@@ -83,13 +83,13 @@ class SearchSyncSchedulerTest {
     }
 
     @Test
-    public void syncCountsToDatabaseShouldCatchExceptionAndNotClearDirtyWhenErrorOccursTest() {
+    void syncCountsToDatabaseShouldCatchExceptionAndNotClearDirtyWhenErrorOccursTest() {
         when(searchCache.getDirtyIds()).thenReturn(List.of("sync-error"));
         when(searchCache.getSearchSession("sync-error")).thenReturn(Optional.of(session));
         doThrow(new RuntimeException("Database error"))
                 .when(searchRepository).updateVisitCount("sync-error", 5);
 
-        searchSyncScheduler.syncCountsToDatabase();
+        searchSyncService.syncDirtyCounts();
 
         verify(searchRepository).updateVisitCount("sync-error", 5);
         verify(searchCache, never()).clearDirty("sync-error");

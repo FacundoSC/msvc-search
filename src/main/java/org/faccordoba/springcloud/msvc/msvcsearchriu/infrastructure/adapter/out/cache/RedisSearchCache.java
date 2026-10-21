@@ -13,10 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @Component
 public class RedisSearchCache implements SearchCachePort {
-
+    private final Logger logger = Logger.getLogger(RedisSearchCache.class.getName());
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
     private static final String SESSION_KEY_PREFIX = "search:session:";
@@ -33,9 +34,15 @@ public class RedisSearchCache implements SearchCachePort {
     @Override
     public Integer incrementCount(String searchId) {
         try {
-            return redisTemplate.opsForValue().increment(COUNT_KEY_PREFIX + searchId).intValue();
+            Long index = redisTemplate.opsForValue().increment(COUNT_KEY_PREFIX + searchId);
+            if(index == null) {
+                 throw new SearchDomainException("Error al incrementar contador en Redis: índice nulo");
+            }
+            return index.intValue();
         } catch (RedisSystemException e) {
-            throw new SearchDomainException("Error al incrementar contador en Redis: " + e.getMessage());        }
+            logger.severe("Error al incrementar contador en Redis: " + e.getMessage());
+            throw new SearchDomainException("Error al incrementar contador en Redis: " + e.getMessage());
+        }
     }
     @Override
     public Optional<SearchSession> getSearchSession(String searchId) {
@@ -54,6 +61,7 @@ public class RedisSearchCache implements SearchCachePort {
                     session.checkOut(), session.ages(), currentCount
             ));
         } catch (Exception e) {
+            logger.warning("Error deserializing session from cache: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -70,6 +78,7 @@ public class RedisSearchCache implements SearchCachePort {
                     SESSION_TTL
             );
         } catch (Exception e) {
+            logger.severe("Error serializing session to cache: " + e.getMessage());
             throw new SearchDomainException("Error serializing session to cache: " + e.getMessage());
         }
     }

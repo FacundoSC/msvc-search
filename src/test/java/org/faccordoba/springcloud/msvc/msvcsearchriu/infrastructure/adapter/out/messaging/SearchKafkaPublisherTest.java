@@ -28,8 +28,9 @@ class SearchKafkaPublisherTest {
 
     @BeforeEach
     void setUp() {
-        publisher = new SearchKafkaPublisher(kafkaTemplate);
-        ReflectionTestUtils.setField(publisher, "topic", "hotel-search-events");
+        String topic = "hotel-search-events";
+        publisher = new SearchKafkaPublisher(kafkaTemplate, topic);
+        ReflectionTestUtils.setField(publisher, "topic", topic);
 
         session = new SearchSession(
                 "pub-sess-1",
@@ -48,7 +49,7 @@ class SearchKafkaPublisherTest {
     }
 
     @Test
-    public void publishSearchEventShouldSendEventToConfiguredTopicTest() {
+     void publishSearchEventShouldSendEventToConfiguredTopicTest() {
         @SuppressWarnings("unchecked")
         SendResult<String, SearchSession> sendResult = mock(SendResult.class);
         when(kafkaTemplate.send("hotel-search-events", session))
@@ -60,7 +61,7 @@ class SearchKafkaPublisherTest {
     }
 
     @Test
-    public void publishSearchEventShouldHandleFutureFailureGracefullyTest() {
+    void publishSearchEventShouldHandleFutureFailureGracefullyTest() {
         CompletableFuture<SendResult<String, SearchSession>> failedFuture = new CompletableFuture<>();
         failedFuture.completeExceptionally(new RuntimeException("Kafka broker unavailable"));
 
