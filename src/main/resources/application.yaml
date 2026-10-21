@@ -48,4 +48,3 @@ spring:
   custom:
     cache:
       ttl-hours:24
-
