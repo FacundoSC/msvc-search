@@ -34,8 +34,8 @@ msvc-search-riu/
 ## 🚀 Tecnologías Principales
 
 * **Java 21** con **Virtual Threads** (`spring.threads.virtual.enabled=true`).
-* **Spring Boot 3.2.0** (Spring Web, Spring Data JPA, Spring Kafka, Spring Data Redis, Validation).
-* **Oracle Database 23c Free** (`gvenzl/oracle-free:23-slim-faststart`).
+* **Spring Boot 4.1.1** (Spring Web, Spring Data JPA, Spring Kafka, Spring Data Redis, Validation).
+* **PostgreSQL 15** (`postgres:15-alpine`).
 * **Apache Kafka (KRaft Mode)** (`apache/kafka:latest`).
 * **Kafka UI** (`provectuslabs/kafka-ui:latest`) para monitoreo de tópicos y mensajes.
 * **Redis** (`redis:alpine`) como caché en memoria de baja latencia.
@@ -65,7 +65,7 @@ Ejecuta el siguiente comando para arrancar la base de datos Oracle, el broker de
 docker compose up -d
 ```
 
-> **Nota:** La base de datos Oracle incluye un mecanismo de `healthcheck`. El contenedor `app` esperará automáticamente a que Oracle esté en estado `healthy` antes de iniciar.
+> **Nota:** La base de datos PostgreSQL incluye un mecanismo de `healthcheck`. El contenedor `app` esperará automáticamente a que PostgreSQL esté en estado `healthy` antes de iniciar.
 
 ### 3. Verificar el Estado de los Contenedores
 
@@ -74,11 +74,11 @@ docker compose ps
 ```
 
 Deberías ver los 5 contenedores en estado `running`:
-* `oracle-db` (`1521:1521`)
+* `postgres` (`5432:5432`)
 * `kafka-broker` (`9092:9092`, `9093:9093`)
 * `kafka-ui` (`8080:8080`)
 * `redis-cache` (`6379:6379`)
-* `hotel-search-app` (`8081:8080`)
+* `hotel-search-app` (`8081:8081`)
 
 ### 4. Monitorear los Logs
 
@@ -117,7 +117,7 @@ docker compose down -v
 | **API Swagger UI** | [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html) | Interfaz interactiva de la API |
 | **OpenAPI Docs (JSON)** | [http://localhost:8081/v3/api-docs](http://localhost:8081/v3/api-docs) | Especificación OpenAPI 3 |
 | **Kafka UI** | [http://localhost:8080](http://localhost:8080) | Panel de administración de Kafka |
-| **Oracle Database** | `localhost:1521/freepdb1` | Usuario: `hotel_user` \| Pass: `hotel_password` |
+| **PostgreSQL Database** | `localhost:5432/postgres` | Usuario: `hotel_user` \| Pass: `hotel_password` |
 | **Redis Cache** | `localhost:6379` | Servidor Redis |
 
 ---
