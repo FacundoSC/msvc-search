@@ -12,6 +12,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,8 +36,8 @@ class SearchKafkaPublisherTest {
         session = new SearchSession(
                 "pub-sess-1",
                 "HOTEL01",
-                LocalDate.of(2026, 9, 1),
-                LocalDate.of(2026, 9, 5),
+                LocalDate.now(ZoneId.systemDefault()).plusDays(1),
+                LocalDate.now(ZoneId.systemDefault()).plusDays(2),
                 List.of(25, 30),
                 0
         );

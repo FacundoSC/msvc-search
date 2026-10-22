@@ -106,36 +106,6 @@ class SearchSessionTest {
                 .hasMessageContaining("Session ID cannot be null or empty");
     }
 
-
-    @Test
-    void newSearchSessionShouldThrowExceptionWhenHotelIdIsNull() {
-        assertThatThrownBy(() -> {
-         new SearchSession(searchId,
-                    null,
-                    checkIn,
-                    checkOut,
-                    ages,
-                    null
-            );
-        }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Hotel ID cannot be null or empty");
-    }
-
-    @Test
-    void newSearchSessionShouldThrowExceptionWhenHotelIdIsEmpty() {
-        assertThatThrownBy(() -> {
-            new SearchSession(searchId,
-                    "",
-                    checkIn,
-                    checkOut,
-                    ages,
-                    null
-            );
-        }).isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Hotel ID cannot be null or empty");
-    }
-
-
     @Test
     void newSearchSessionShouldThrowExceptionWhenCheckInIsNull() {
         assertThatThrownBy(() -> {

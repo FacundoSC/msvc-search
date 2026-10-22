@@ -13,27 +13,27 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SearchKafkaConsumerTest {
-
-    @Mock
-    private SearchRepositoryPort searchRepository;
-
-    @Mock
-    private SearchCachePort searchCache;
-
+    @Mock private SearchRepositoryPort searchRepository;
+    @Mock private SearchCachePort searchCache;
     private ObjectMapper objectMapper;
     private SearchKafkaConsumer consumer;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         consumer = new SearchKafkaConsumer(searchRepository, searchCache, objectMapper);
+        checkIn = LocalDate.now(ZoneId.systemDefault()).plusDays(1);
+        checkOut = LocalDate.now(ZoneId.systemDefault()).plusDays(4);
     }
 
     @AfterEach
@@ -47,8 +47,8 @@ class SearchKafkaConsumerTest {
         SearchSession session = new SearchSession(
                 "kafka-sess-0",
                 "HOTEL01",
-                LocalDate.of(2026, 8, 1),
-                LocalDate.of(2026, 8, 5),
+                checkIn,
+                checkOut,
                 List.of(30),
                 0
         );
@@ -65,8 +65,8 @@ class SearchKafkaConsumerTest {
         SearchSession session = new SearchSession(
                 "kafka-sess-1",
                 "HOTEL01",
-                LocalDate.of(2026, 8, 1),
-                LocalDate.of(2026, 8, 5),
+                checkIn,
+                checkOut,
                 List.of(30),
                 4
         );
@@ -93,8 +93,8 @@ class SearchKafkaConsumerTest {
         SearchSession session = new SearchSession(
                 "kafka-sess-err",
                 "HOTEL01",
-                LocalDate.of(2026, 8, 1),
-                LocalDate.of(2026, 8, 5),
+                checkIn,
+                checkOut,
                 List.of(30),
                 0
         );

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +20,7 @@ class SearchSessionMapperTest {
     @BeforeEach
     void setUp() {
         mapper = new SearchSessionMapperImpl();
+
     }
 
     @AfterEach
@@ -31,19 +33,18 @@ class SearchSessionMapperTest {
         SearchSession domain = new SearchSession(
                 "map-sess-1",
                 "HOTEL01",
-                LocalDate.of(2026, 9, 10),
-                LocalDate.of(2026, 9, 15),
+                LocalDate.now(ZoneId.systemDefault()).plusDays(1),
+                LocalDate.now(ZoneId.systemDefault()).plusDays(6),
                 List.of(25, 30, 4),
                 2
         );
-
         SearchSessionEntity entity = mapper.toEntity(domain);
         assertAll(
                 () -> assertThat(entity).isNotNull(),
                 () -> assertThat(entity.getSearchId()).isEqualTo("map-sess-1"),
                 () -> assertThat(entity.getHotelId()).isEqualTo("HOTEL01"),
-                () -> assertThat(entity.getCheckIn()).isEqualTo(LocalDate.of(2026, 9, 10)),
-                () -> assertThat(entity.getCheckOut()).isEqualTo(LocalDate.of(2026, 9, 15)),
+                () -> assertThat(entity.getCheckIn()).isEqualTo(LocalDate.now(ZoneId.systemDefault()).plusDays(1)),
+                () -> assertThat(entity.getCheckOut()).isEqualTo(LocalDate.now(ZoneId.systemDefault()).plusDays(6)),
                 () -> assertThat(entity.getAgesSequence()).isEqualTo("25,30,4"),
                 () -> assertThat(entity.getVisitCount()).isEqualTo(2)
         );
@@ -54,8 +55,8 @@ class SearchSessionMapperTest {
         SearchSessionEntity entity = new SearchSessionEntity(
                 "map-sess-2",
                 "HOTEL02",
-                LocalDate.of(2026, 9, 20),
-                LocalDate.of(2026, 9, 25),
+                LocalDate.now(ZoneId.systemDefault()).plusDays(1),
+                LocalDate.now(ZoneId.systemDefault()).plusDays(6),
                 "35,40",
                 5
         );
@@ -66,8 +67,8 @@ class SearchSessionMapperTest {
                 () -> assertThat(domain).isNotNull(),
                 () -> assertThat(domain.sessionId()).isEqualTo("map-sess-2"),
                 () -> assertThat(domain.hotelId()).isEqualTo("HOTEL02"),
-                () -> assertThat(domain.checkIn()).isEqualTo(LocalDate.of(2026, 9, 20)),
-                () -> assertThat(domain.checkOut()).isEqualTo(LocalDate.of(2026, 9, 25)),
+                () -> assertThat(domain.checkIn()).isEqualTo(LocalDate.now(ZoneId.systemDefault()).plusDays(1)),
+                () -> assertThat(domain.checkOut()).isEqualTo(LocalDate.now(ZoneId.systemDefault()).plusDays(6)),
                 () -> assertThat(domain.ages()).containsExactly(35, 40),
                 () -> assertThat(domain.count()).isEqualTo(5)
         );

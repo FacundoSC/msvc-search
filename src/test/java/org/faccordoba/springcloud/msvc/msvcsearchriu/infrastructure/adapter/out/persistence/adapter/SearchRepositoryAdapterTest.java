@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,19 +42,21 @@ class SearchRepositoryAdapterTest {
 
     @BeforeEach
     void setUp() {
+        LocalDate checkIn = LocalDate.now(ZoneId.systemDefault()).plusDays(1);
+        LocalDate checkOut = LocalDate.now(ZoneId.systemDefault()).plusDays(2);
         domainSession = new SearchSession(
                 "repo-sess-1",
                 "HOTEL01",
-                LocalDate.of(2026, 10, 1),
-                LocalDate.of(2026, 10, 5),
+                checkIn,
+                checkOut,
                 List.of(20, 22),
                 0
         );
         entitySession = new SearchSessionEntity(
                 "repo-sess-1",
                 "HOTEL01",
-                LocalDate.of(2026, 10, 1),
-                LocalDate.of(2026, 10, 5),
+                checkIn,
+                checkOut,
                 "20,22",
                 0
         );
