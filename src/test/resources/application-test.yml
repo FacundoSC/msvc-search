@@ -43,3 +43,12 @@ spring:
   custom:
     cache:
       ttl-hours: 24
+
+#6. config springdoc
+api:
+  info:
+    title: "Search Microservice API - RIU Hotels & Resorts"
+    version: "3.0.0"
+    description: "API for Search Microservice API - RIU Hotels & Resorts."
+    name: "Facundo Cordoba"
+

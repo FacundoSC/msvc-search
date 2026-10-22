@@ -2,19 +2,24 @@ package org.faccordoba.springcloud.msvc.msvcsearchriu.infrastructure.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class OpenApiConfigTest {
+    @Value("${api.info.title}")
+    private String title;
+    @Value("${api.info.version}")
+    private String version;
+    @Value("${api.info.description}")
+    private String description;
+    @Value("${api.info.name}")
+    private String name;
 
     @Test
      void openApiConfigShouldProvideCustomOpenAPITest() {
-        String title = "Search Microservice API - RIU Hotels & Resorts";
-        String description = "API for Search Microservice API - RIU Hotels & Resorts";
-        String version = "1.0.0";
-        String name = "Facundo Cordoba";
-        OpenApiConfig config = new OpenApiConfig();
+        OpenApiConfig config = new OpenApiConfig(title, version, description, name);
         OpenAPI openAPI = config.customOpenAPI();
 
         assertAll(

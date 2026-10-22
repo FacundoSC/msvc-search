@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -47,12 +48,14 @@ class RedisSearchCacheTest {
 
     @BeforeEach
     void setUp() {
+        LocalDate checkIn = LocalDate.now(ZoneId.systemDefault()).plusDays(1);
+        LocalDate checkOut = LocalDate.now(ZoneId.systemDefault()).plusDays(2);
         redisSearchCache = new RedisSearchCache(redisTemplate, objectMapper);
         session = new SearchSession(
                 "redis-sess-1",
                 "HOTEL01",
-                LocalDate.of(2026, 10, 1),
-                LocalDate.of(2026, 10, 5),
+                checkIn,
+                checkOut,
                 List.of(25, 30),
                 2
         );

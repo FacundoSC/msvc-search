@@ -1,6 +1,6 @@
 # 🏨 Hotel Search Microservice - RIU
 
-Microservicio de alto rendimiento desarrollado en **Java 21** y **Spring Boot 3.2** bajo **Arquitectura Hexagonal (Puertos y Adaptadores)**. Diseñado para gestionar registros de búsquedas hoteleras, procesar eventos asíncronos mediante **Apache Kafka**, acelerar lecturas y conteos atómicos con **Redis** (patrón *Write-Behind Cache*), y persistir información histórica en **Oracle Database 23c Free**, aprovechando al máximo los **Virtual Threads (Project Loom)**.
+Microservicio de alto rendimiento desarrollado en **Java 21** y **Spring Boot 4.1.1** bajo **Arquitectura Hexagonal (Puertos y Adaptadores)**. Diseñado para gestionar registros de búsquedas hoteleras, procesar eventos asíncronos mediante **Apache Kafka**, acelerar lecturas y conteos atómicos con **Redis** (patrón *Write-Behind Cache*), y persistir información histórica en **PostgreSQL**, aprovechando al máximo los **Virtual Threads (Project Loom)**.
 
 ---
 
@@ -22,7 +22,7 @@ msvc-search-riu/
     ├── adapter/
     │   ├── in/web/           # Controladores REST, DTOs, Validadores personalizados
     │   ├── in/messaging/     # Consumidor Kafka con Virtual Threads
-    │   ├── out/persistence/  # Adaptador JPA, Entidades y Repositorios Oracle
+    │   ├── out/persistence/  # Adaptador JPA, Entidades y Repositorios PostgreSQL
     │   ├── out/cache/        # Adaptador Redis con operaciones atómicas
     │   └── out/messaging/    # Publicador Kafka con KafkaTemplate
     ├── config/               # Configuración de Beans (Kafka, OpenAPI, Jackson)
@@ -59,7 +59,7 @@ docker build -t faccordoba/msvc-search-riu:latest .
 
 ### 2. Iniciar Todos los Servicios
 
-Ejecuta el siguiente comando para arrancar la base de datos Oracle, el broker de Kafka, Kafka UI, Redis y la aplicación Spring Boot en segundo plano:
+Ejecuta el siguiente comando para arrancar la base de datos PostgreSQL, el broker de Kafka, Kafka UI, Redis y la aplicación Spring Boot en segundo plano:
 
 ```bash
 docker compose up -d
@@ -193,7 +193,7 @@ curl -X GET "http://localhost:8081/count?searchId=a1b2c3d"
 
 | Variable | Valor por Defecto | Descripción |
 | :--- | :--- | :--- |
-| `SPRING_DATASOURCE_URL` | `jdbc:oracle:thin:@//oracle-db-hotel:1521/freepdb1` | URL JDBC de conexión a Oracle |
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://postgresql-db-hotel:5432/postgres` | URL JDBC de conexión a PostgreSQL |
 | `SPRING_DATASOURCE_USERNAME` | `system` | Usuario de base de datos |
 | `SPRING_DATASOURCE_PASSWORD` | `hotel_password` | Contraseña de base de datos |
 | `SPRING_KAFKA_BOOTSTRAP_SERVERS` | `localhost:9092` | Dirección del cluster Kafka |

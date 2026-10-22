@@ -4,24 +4,36 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class OpenApiConfig {
-    @Value("${springdoc.api-docs.title:Search Microservice API - RIU Hotels & Resorts}")
-    private String title;
+    private final String title;
+    private final String version;
+    private final String description;
+    private final String name;
+
+    public OpenApiConfig(@Value("${api.info.title}") String title,
+                         @Value("${api.info.version}") String version,
+                         @Value("${api.info.description}") String description,
+                         @Value("${api.info.name}") String name) {
+        this.title = title;
+        this.version = version;
+        this.description = description;
+        this.name = name;
+    }
 
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title(title)
-                        .version("1.0.0")
-                        .description("API for Search Microservice API - RIU Hotels & Resorts")
+                        .title(this.title)
+                        .version(this.version)
+                        .description(this.description)
                         .contact(new Contact()
-                                .name("Facundo Cordoba")
+                                .name(this.name)
                                 .email("faccordoba@riu.com"))
                         .license( new License()
                                 .name("Apache 2.0")

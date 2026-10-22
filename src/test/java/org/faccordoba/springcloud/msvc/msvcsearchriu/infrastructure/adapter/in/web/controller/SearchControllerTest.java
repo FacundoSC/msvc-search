@@ -77,7 +77,7 @@ class SearchControllerTest {
         mockMvc.perform(post("/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.searchId").value("gen-id-1"));
     }
 

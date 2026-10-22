@@ -77,7 +77,9 @@ services:
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_DATASOURCE_USERNAME: hotel_user
       SPRING_DATASOURCE_PASSWORD: hotel_password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: ${SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE:-20}
+      SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: ${SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE:-5}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_KAFKA_BOOTSTRAP_SERVERS: broker:29092
       SPRING_KAFKA_TOPIC_NAME: hotel_availability_searches
       SPRING_DATA_REDIS_HOST: redis
@@ -90,6 +92,31 @@ services:
           condition: service_started
         redis:
           condition: service_started
+    networks:
+      - hotel-network
+
+  k6:
+    build:
+      context: .
+      dockerfile: Dockerfile.k6
+    image: msvc-search-k6:local
+    profiles:
+      - loadtest
+    depends_on:
+      - app
+    environment:
+      BASE_URL: http://app:8081
+      SEED_COUNT: ${SEED_COUNT:-1000000}
+      K6_VUS: ${K6_VUS:-50}
+      K6_DURATION: ${K6_DURATION:-2m}
+    entrypoint: ["k6"]
+    command:
+      - run
+      - --vus
+      - ${K6_VUS:-50}
+      - --duration
+      - ${K6_DURATION:-2m}
+      - /load-test.js
     networks:
       - hotel-network
 
