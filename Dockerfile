@@ -13,6 +13,11 @@ RUN mvn clean package -DskipTests -Dmaven.javadoc.skip=true -B
 
 FROM eclipse-temurin:21-jre-alpine
 
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+
+USER nonroot
+
 WORKDIR /app
 
 COPY --from=build /app/target/msvc-search-riu-0.0.1-SNAPSHOT.jar app.jar
