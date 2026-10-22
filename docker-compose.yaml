@@ -10,12 +10,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready"]
-      interval: 10s
-      timeout: 5s
-      retries: 20
-      start_period: 30s
     networks:
       - hotel-network
   #2. kafka broker
@@ -91,7 +85,7 @@ services:
       SPRING_THREADS_VIRTUAL_ENABLED: "true"
     depends_on:
         postgres:
-         condition: service_healthy
+         condition: service_started
         broker:
           condition: service_started
         redis:

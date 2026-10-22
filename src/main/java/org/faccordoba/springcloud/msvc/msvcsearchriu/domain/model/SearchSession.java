@@ -1,6 +1,5 @@
 package org.faccordoba.springcloud.msvc.msvcsearchriu.domain.model;
 
-import io.netty.util.internal.StringUtil;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -14,8 +13,7 @@ public record SearchSession(
         List<Integer> ages,
         Integer count) {
     public SearchSession {
-        if (StringUtil.isNullOrEmpty(sessionId)) { throw new IllegalArgumentException("Session ID cannot be null or empty"); }
-        if (StringUtil.isNullOrEmpty(hotelId)) throw new IllegalArgumentException("Hotel ID cannot be null or empty");
+        if (sessionId == null || sessionId.trim().isEmpty()) { throw new IllegalArgumentException("Session ID cannot be null or empty"); }
         if (checkIn == null || checkOut == null) throw new IllegalArgumentException("Dates cannot be null");
         LocalDate now = LocalDate.now(ZoneId.systemDefault());
         if (checkIn.isBefore(now)) throw new IllegalArgumentException("CheckIn cannot be in the past");
