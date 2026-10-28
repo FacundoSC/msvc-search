@@ -16,10 +16,13 @@ import java.util.Map;
 @Configuration
 @EnableKafka
 public class SearchKafkaConsumerConfig {
-    @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
-    @Value("${spring.kafka.consumer.group-id}")
-    private String groupId;
+    private final String bootstrapServers;
+    private final String groupId;
+
+    public  SearchKafkaConsumerConfig(@Value("${spring.kafka.bootstrap-servers}")String bootstrapServers, @Value("${spring.kafka.consumer.group-id}") String groupId){
+        this.bootstrapServers = bootstrapServers;
+        this.groupId = groupId;
+    }
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
