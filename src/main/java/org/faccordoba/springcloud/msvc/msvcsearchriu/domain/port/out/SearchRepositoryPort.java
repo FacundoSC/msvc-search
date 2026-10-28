@@ -21,5 +21,5 @@ public interface SearchRepositoryPort {
      * Atomically increments the visit count for the given searchId.
      * Returns number of rows affected (should be 0 or 1).
      */
-    void updateVisitCount(String searchId, int count);
+    void updateVisitCount(String searchId, Integer count);
 }

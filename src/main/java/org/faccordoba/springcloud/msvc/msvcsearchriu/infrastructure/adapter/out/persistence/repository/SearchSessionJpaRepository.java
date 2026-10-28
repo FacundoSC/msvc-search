@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface SearchSessionJpaRepository extends JpaRepository<SearchSessionEntity, Integer> {
+public interface SearchSessionJpaRepository extends JpaRepository<SearchSessionEntity, String> {
 
     @Query("SELECT s FROM SearchSessionEntity s WHERE s.searchId = :searchId")
     Optional<SearchSessionEntity> findBySearchId(@Param("searchId") String searchId);
