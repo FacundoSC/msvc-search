@@ -43,7 +43,7 @@ public class SearchRepositoryAdapter implements SearchRepositoryPort {
 
     @Override
     @Transactional
-    public void updateVisitCount(String searchId, int count) {
+    public void updateVisitCount(String searchId, Integer count) {
         try {
             searchSessionJpaRepository.updateVisitCount(searchId,count);
         }
